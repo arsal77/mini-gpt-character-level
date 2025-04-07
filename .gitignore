@@ -1,0 +1,46 @@
+
+# Python caches and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor specific
+.idea/
+.vscode/
+*.swp
+*~
+
+# Processed data files
+prepared_data/
+prepared_data_*/
+*.pt
+
+# MLflow local tracking files
+mlruns/
+
+# Checkpoints and ONNX models (often treated as artifacts)
+*.onnx
+output/
+training_output_*/
+
+# Secrets
+secrets/
+*.secret
+*.key
+
+# Logs
+*.log
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
