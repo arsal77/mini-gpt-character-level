@@ -1,0 +1,20 @@
+# Data parameters
+corpus_path: 'data/sample.txt' # replace sample.txt with the txt file you want to train on
+split: 0.9 #train_split
+
+# Model parameters
+context_len: 128
+n_emb: 384
+n_heads: 6 #make sure n_emb//n_heads is an integer with no remainder.
+# head_size is calculated: n_emb // n_heads
+n_layers: 6 # Specify the number of Block layers
+
+# Training parameters
+batch_size: 64
+train_iterations: 5000
+learning_rate: 3e-4
+
+# Generation parameters (if using generate.py)
+start_prompt: "\n"
+max_gen_tokens: 500
+model_load_path: 'model/mini_gpt_model.pth'

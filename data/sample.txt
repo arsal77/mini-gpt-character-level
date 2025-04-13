@@ -1,0 +1,1 @@
+Replace this txt file with your own txt file for training and make the change in the config.yaml file.
