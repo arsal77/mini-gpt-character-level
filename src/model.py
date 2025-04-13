@@ -11,6 +11,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 ## model.py
 class Head(nn.Module) :
   def __init__(self,n_emb,head_size,context_len) :
@@ -20,7 +22,7 @@ class Head(nn.Module) :
     self.value = nn.Linear(n_emb,head_size,bias=False)
     self.dropout = nn.Dropout(0.2)
     self.head_size=head_size
-    self.register_buffer('tril',torch.tril(torch.ones(context_len,context_len,device=device)))
+    self.register_buffer('tril',torch.tril(torch.ones(context_len,context_len)))
 
   def forward(self,idx) :
     B,T,C = idx.shape
@@ -148,11 +150,11 @@ class MiniGPT(nn.Module) :
   @torch.no_grad()
   def generate(self,text,max_sample_gen):
     self.eval()
-    idx = torch.unsqueeze(torch.tensor(encode(text,stoi)),0).to(device=device)
+    idx = torch.unsqueeze(torch.tensor(self.encode(text,self.stoi)),0).to(device=device)
     for _ in range(max_sample_gen):
       logits,loss = self(idx[:,-self.context_len:])
       probs = F.softmax(logits[:,-1,:],dim=-1)
       next_token = torch.multinomial(probs,1)
       idx = torch.cat([idx,next_token],dim=1)
     self.train()
-    return ''.join(self.decode(torch.squeeze(idx,0).tolist(),itos))
+    return ''.join(self.decode(torch.squeeze(idx,0).tolist(),self.itos))

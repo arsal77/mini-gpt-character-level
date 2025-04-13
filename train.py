@@ -43,10 +43,13 @@ batch_size = config.get('batch_size', 64)
 train_iterations = config.get('train_iterations', 5000)
 learning_rate = config.get('learning_rate', 3e-4)
 
-model_save_dir = os.path.join(project_root, os.path.dirname(config.get('model_load_path', 'model/mini_gpt_model.pth')))
-model_save_filename =  'mini_gpt_model.pth' # you can change the name if you want to save the model weights with a different name.
-model_save_path = os.path.join(model_save_dir, model_save_filename)
 full_corpus_path = os.path.join(project_root, corpus_path)
+
+relative_save_path = config.get('model_load_path', 'model/mini_gpt_model.pth')
+model_save_path = os.path.join(project_root, relative_save_path)
+print(f"Saving final model state dictionary to: {model_save_path}")
+model_save_dir = os.path.dirname(model_save_path)
+os.makedirs(model_save_dir, exist_ok=True)
 
 head_size = n_emb // n_heads
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -58,6 +61,7 @@ if device == 'cuda':
 
 text = load_data(full_corpus_path)
 vocab_size,stoi,itos,enc_data=encode_data(text)
+enc_data.to(device)
 x_train,x_val=train_test_split(enc_data,0.9)
 
 model = MiniGPT(vocab_size,n_emb,head_size,n_heads,context_len,stoi,itos,encode,decode,n_layers)

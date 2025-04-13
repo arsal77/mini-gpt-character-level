@@ -20,7 +20,7 @@ def encode_data(text) :
   vocab_len= len(vocab)
   stoi = {j:i for i,j in enumerate(vocab)}
   itos = {j:i for i,j in stoi.items()}
-  encode = torch.tensor([stoi[x] for x in data],device=device)
+  encode = torch.tensor([stoi[x] for x in text])
 
 
 
@@ -39,10 +39,8 @@ def train_test_split(data,split=0.9) :
   return X_train,X_val
 
 def generate_batch(data,batch_size=32,context_len=8) :
-  idx = torch.randint(len(data)-context_len,(batch_size,),device=device)
+  idx = torch.randint(len(data)-context_len,(batch_size,))
   x = torch.stack([data[id:id+context_len] for id in idx],dim=0)
   y = torch.stack([data[id+1:id+context_len+1] for id in idx],dim=0)
-  x=x.to(device)
-  y=y.to(device)
-
+ 
   return x,y
