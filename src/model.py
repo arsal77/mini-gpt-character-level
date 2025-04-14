@@ -5,7 +5,6 @@ import torch.nn.functional as F
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-## model.py
 class Head(nn.Module) :
   def __init__(self,n_emb,head_size,context_len) :
     super().__init__()
@@ -18,16 +17,16 @@ class Head(nn.Module) :
 
   def forward(self,idx) :
     B,T,C = idx.shape
-    query = self.query(idx) # B,T,H
-    key = self.key(idx) #B,T,H
-    value = self.value(idx) #B,T,H
-    wei = query@key.transpose(-1,-2) # B,T,H@ B,H,T -> B,T,T
+    query = self.query(idx) 
+    key = self.key(idx) 
+    value = self.value(idx) 
+    wei = query@key.transpose(-1,-2) 
     wei = wei.masked_fill(self.tril[:T,:T]==0,float('-inf'))
-    wei = wei*(self.head_size**-0.5) ## so softmax is spread out and there is a mix of value embeddings rather than just 1.
+    wei = wei*(self.head_size**-0.5) 
     wei = F.softmax(wei,dim=1)
     wei = self.dropout(wei)
 
-    out = wei@value # B,T,H
+    out = wei@value 
 
     return out
 
@@ -50,7 +49,6 @@ class FeedForward(nn.Module) :
   def __init__(self,n_emb) :
     super().__init__()
     self.ff = nn.Sequential(nn.Linear(n_emb,n_emb*4),nn.ReLU(),nn.Linear(n_emb*4,n_emb), nn.Dropout(0.2))
- # 4*n_emb as in the paper
 
   def forward(self,idx) :
     return self.ff(idx)
@@ -58,7 +56,6 @@ class FeedForward(nn.Module) :
 class Block(nn.Module) :
   def __init__(self,n_emb,head_size,n_heads,context_len) :
     super().__init__()
-    #self.transformer=nn.Sequential(MultiHeadedAttention(head_size,n_heads),FeedForward(n_emb))
     self.multi_head = MultiHeadedAttention(n_emb,head_size,n_heads,context_len)
     self.ff = FeedForward(n_emb)
     self.layer_norm_1 = LayerNorm1d(n_emb)
@@ -66,7 +63,6 @@ class Block(nn.Module) :
 
 
   def forward(self,idx) :
-    #out = self.transformer(idx)
     out = idx + self.multi_head(self.layer_norm_1(idx))
     out = out + self.ff(self.layer_norm_2(out))
     return out
@@ -89,17 +85,14 @@ class LayerNorm1d(nn.Module):
         return self.out
 
 
-    # def parameters(self):
-    #     return [self.gamma]+[self.beta]
+    
 
 class MiniGPT(nn.Module) :
 
   def __init__(self,vocab_size,n_emb,head_size,n_heads,context_len,stoi,itos,encode,decode,n_layers):
     super().__init__()
     self.token_embedding_lookup = nn.Embedding(vocab_size,n_emb)
-    self.position_embedding_lookup = nn.Embedding(context_len,n_emb) ## since we have to add them, the embedding dims have to match
-    #self.head = Head(n_emb)
-    #self.multi_head = MultiHeadedAttention(n_emb/4,4)
+    self.position_embedding_lookup = nn.Embedding(context_len,n_emb)
     self.block = nn.Sequential(*[Block(n_emb,head_size,n_heads,context_len) for i in range(n_layers)])
     self.layer_norm = LayerNorm1d(n_emb)
     self.lm_head = nn.Linear(head_size*n_heads,vocab_size)
@@ -122,14 +115,12 @@ class MiniGPT(nn.Module) :
   def forward(self,idx,target = None) :
 
     B,T = idx.shape
-    emb_token = self.token_embedding_lookup(idx) ##(B,T,C)
-    emb_pos = self.position_embedding_lookup(torch.arange(T,device=device)) ## (T,C)
+    emb_token = self.token_embedding_lookup(idx) 
+    emb_pos = self.position_embedding_lookup(torch.arange(T,device=device)) 
     emb = emb_token + emb_pos
-    #x = self.head(emb) #B,T,H(B,T,C)
-    #x =self.multi_head(emb)
     x=self.block(emb)
     x=self.layer_norm(x)
-    logits = self.lm_head(x) # B,T,vocab_size
+    logits = self.lm_head(x) 
 
     if target is not None:
       logits= logits.view(-1,self.vocab_size)

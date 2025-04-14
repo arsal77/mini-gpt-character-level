@@ -82,10 +82,10 @@ for i in range(train_iterations) :
   scaler.step(opt)
   scaler.update()
   model.eval()
-  with torch.no_grad():  # Disable gradient calculation during validation
+  with torch.no_grad(): 
       x_val_batch, y_val_batch = generate_batch(x_val, batch_size, context_len)
       x_val_batch, y_val_batch = x_val_batch.to(device), y_val_batch.to(device)
-      with autocast(enabled=(device.type == 'cuda')): # FIX: Add autocast wrapper
+      with autocast(enabled=(device.type == 'cuda')): 
           logits_val, loss_val = model(x_val_batch, y_val_batch)
   model.train()
 
