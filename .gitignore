@@ -44,4 +44,6 @@ build/
 
 # Jupyter notebook checkpoints
 .ipynb_checkpoints/
+*.ipynb
 # Model checkpoints
+
