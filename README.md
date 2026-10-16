@@ -14,6 +14,7 @@ A simple, educational implementation of a GPT-style Transformer model that opera
 
 ## Project Structure
 
+```
 mini-gpt-character-level/
 ├── config.yaml        # model, training and generation settings
 ├── train.py           # training script
@@ -23,7 +24,7 @@ mini-gpt-character-level/
 │   └── sample.txt     # small sample corpus
 └── model/
     └── mini_gpt_model_sample.pth   # trained weights on the sample
-    
+```    
 ## Installation
 
 1.  **Clone the repository:**
