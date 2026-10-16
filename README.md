@@ -13,6 +13,17 @@ A simple, educational implementation of a GPT-style Transformer model that opera
 *   GPU (CUDA) support with mixed-precision training.
 
 ## Project Structure
+
+mini-gpt-character-level/
+├── config.yaml        # model, training and generation settings
+├── train.py           # training script
+├── generate.py        # text generation script
+├── requirements.txt
+├── data/
+│   └── sample.txt     # small sample corpus
+└── model/
+    └── mini_gpt_model_sample.pth   # trained weights on the sample
+    
 ## Installation
 
 1.  **Clone the repository:**
@@ -34,7 +45,7 @@ A simple, educational implementation of a GPT-style Transformer model that opera
 3.  **To use your own data:**
     *   Place your `.txt` file inside the `data/` directory.
     *   Update the `corpus_path` parameter in `config.yaml` to point to your file (e.g., `corpus_path: 'data/your_corpus.txt'`).
-4.  
+   
 
 ## Configuration (`config.yaml`)
 
